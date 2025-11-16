@@ -1,0 +1,77 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head"></head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="container d-flex bg-white shadow-sm">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Меню</h3>
+            </div>
+            <form action="/shawarma" method="get">
+                <ul class="list-unstyled components">
+                    <h5>Категории</h5>
+                    <li class="active mb-2" id="homeSubmenu">
+                        <ul class="list-unstyled">
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Шаурма')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Денер')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Бургер')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Пицца')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Напиток')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-category-checkbox('Классика')"></li>
+                        </ul>
+                    </li>
+                    <h5>Моральность</h5>
+                    <li class="active mb-2">
+                        <ul class="list-unstyled">
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-morality-checkbox('Халяль')"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-morality-checkbox('Харам')"></li>
+                        </ul>
+                    </li>
+                    <h5>Цена</h5>
+                    <li class="active mb-2">
+                        <ul class="list-unstyled">
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-price-checkbox(startingPrice=0, endingPrice=9999999)"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-price-checkbox(startingPrice=10, endingPrice=160)"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-price-checkbox(startingPrice=160, endingPrice=250)"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-price-checkbox(startingPrice=250, endingPrice=500)"></li>
+                            <li th:insert="fragments/shawarmas-fragments :: shawarmas-price-checkbox(startingPrice=500, endingPrice=5000)"></li>
+                        </ul>
+                    </li>
+                </ul>
+            </form>
+        </nav>
+        <div class="container mb-5">
+            <div class="container-fluid mt-5 ml-1">
+                <form action="/shawarma/search" method="get" style="justify-content: center">
+                    <th:block th:replace="~{fragments/common-fragments :: search(
+                        options=(${ {
+                            { value: 'category', text: 'Категория' },
+                            { value: 'shawarmaTitle', text: 'Название продукта' }
+                        } })
+                    )}"/>
+                </form>
+            </div>
+            <div class="mt-4 ml-1">
+                <th:block th:replace="~{fragments/common-fragments :: pagination(class='mx-3')}"/>
+                <div class="container-fluid">
+                    <div class="row" th:fragment="list">
+                        <th:block th:if="${page.getContent().size() == 0}"
+                                  th:insert="~{fragments/common-fragments :: empty-result(text='Продукт не найден')}"/>
+                        <th:block th:unless="${page.getContent().size() == 0}" th:each="shawarma : ${page.getContent()}">
+                            <th:block th:replace="fragments/shawarmas-fragments :: shawarma-item(${shawarma})"/>
+                        </th:block>
+                    </div>
+                </div>
+                <th:block th:if="${page.getContent().size() != 0}">
+                    <th:block th:replace="~{fragments/common-fragments :: pagination(class='mx-3')}"/>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head"></head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="py-5">
+        <div class="container py-5 bg-white shadow-sm card-height">
+            <div class="row mx-3">
+                <th:block th:replace="fragments/account-fragments :: account-sidebar"/>
+                <div class="col-md-9 mb-5">
+                    <th:block th:replace="fragments/common-fragments :: info-title(
+                        text='Добавить продукт',
+                        icon='fas fa-plus-square mr-2'
+                    )"/>
+                    <br/>
+                    <form method="post" action="/admin/add/shawarma" enctype="multipart/form-data">
+                        <div class="form row">
+                            <th:block th:replace="fragments/account-fragments :: add-shawarma-input(
+                                title='Название продукта',
+                                name='shawarmaTitle',
+                                placeholder='Введите название продукта',
+                                value=(${shawarma} ? ${shawarma.shawarmaTitle} : ''),
+                                error=(${shawarmaTitleError})
+                            )"/>
+                            <th:block th:replace="fragments/account-fragments :: add-shawarma-input(
+                                title='Категория продукта',
+                                name='category',
+                                placeholder='Введите категорию продукта',
+                                value=(${shawarma} ? ${shawarma.category} : ''),
+                                error=(${categoryError})
+                            )"/>
+                        </div>
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-shawarma-select(
+                                title='Моральность',
+                                name='morality',
+                                options=(${ {'Халяль', 'Харам'} }),
+                                error=(${moralityError})
+                            )"/>
+                            <th:block th:replace="fragments/account-fragments :: add-shawarma-input(
+                                title='Описание',
+                                name='description',
+                                placeholder='Введите описание продукта',
+                                value=(${shawarma} ? ${shawarma.description} : ''),
+                                error=(${descriptionError})
+                            )"/>
+                        </div>
+                        <div class="form row mt-3">
+                            <th:block th:replace="fragments/account-fragments :: add-shawarma-input(
+                                title='Цена',
+                                name='price',
+                                placeholder='Введите цену',
+                                value=(${shawarma} ? ${shawarma.price} : ''),
+                                error=(${priceError})
+                            )"/>
+                            <div class="col" style="margin-top: 35px">
+                                <input type="file" name="file"/>
+                            </div>
+                        </div>
+                        <th:block th:replace="fragments/common-fragments :: icon-button(
+                            text='Добавить',
+                            buttonClassName='mt-3',
+                            icon='fas fa-plus-square mr-2'
+                        )"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+</body>
+</html>

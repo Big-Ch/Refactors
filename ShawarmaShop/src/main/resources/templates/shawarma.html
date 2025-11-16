@@ -1,0 +1,57 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-fragments :: head"></head>
+<body>
+<div th:insert="~{fragments/common-fragments :: scripts}"></div>
+<div th:replace="fragments/common-fragments :: navbar"></div>
+<div id="container" class="bg-light">
+    <div class="container pt-5 pb-5 bg-white shadow-sm">
+        <div class="row">
+            <div class="col-md-5">
+                <img th:src="@{/img/{path} (path = ${shawarma.getFilename()})}" class="rounded mx-auto w-100">
+            </div>
+            <div class="col-md-7">
+                <h2 th:text="${shawarma.getShawarmaTitle()}"></h2>
+                <h3 th:text="${shawarma.getCategory()}"></h3>
+                <p>ID продукта: <span th:text="${shawarma.getId()}"></span></p>
+                <p class="product-stock" style="color: #54C0A1">В наличии</p>
+                <div class="row ml-1">
+                    <h6 class="mr-5">
+                        <span th:text="${shawarma.getPrice()}"></span>.00 р.
+                    </h6>
+                    <form action="/cart/add" method="post">
+                        <button type="submit" name="shawarmaId" class="btn btn-success mx-3"
+                                th:value="${shawarma.getId()}">
+                            <i class="fas fa-cart-plus mr-2 fa-lg"></i>
+                            Добавить в корзину
+                        </button>
+                    </form>
+                </div>
+                <br>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>Название продукта:</td>
+                        <td th:text="${shawarma.getShawarmaTitle()}"></td>
+                    </tr>
+                    <tr>
+                        <td>Категория:</td>
+                        <td th:text="${shawarma.getCategory()}"></td>
+                    </tr>
+                    <tr>
+                        <td>Моральность:</td>
+                        <td th:text="${shawarma.getMorality()}"></td>
+                    </tr>
+                    <tr>
+                        <td>Описание:</td>
+                        <td th:text="${shawarma.getDescription()}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:insert="~{fragments/common-fragments :: footer}"></footer>
+</body>
+</html>
