@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface AdminService {
 
     Page<Shawarma> getShawarmas(Pageable pageable);
@@ -29,9 +31,9 @@ public interface AdminService {
 
     Shawarma getShawarmaById(Long shawarmaId);
 
-    MessageResponse editShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file);
+    MessageResponse editShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException;
 
-    MessageResponse addShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file);
+    MessageResponse addShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException;
 
     UserInfoResponse getUserById(Long userId, Pageable pageable);
 }

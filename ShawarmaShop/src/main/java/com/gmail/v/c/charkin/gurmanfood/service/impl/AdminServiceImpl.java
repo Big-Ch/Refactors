@@ -14,7 +14,6 @@ import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -85,16 +84,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @SneakyThrows
     @Transactional
-    public MessageResponse editShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) {
+    public MessageResponse editShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException {
         return saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_EDITED);
     }
 
     @Override
-    @SneakyThrows
     @Transactional
-    public MessageResponse addShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) {
+    public MessageResponse addShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException {
         return saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_ADDED);
     }
 

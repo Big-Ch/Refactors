@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping(PathConstants.ADMIN)
@@ -78,7 +79,7 @@ public class AdminController {
 
     @PostMapping("/edit/shawarma")
     public String editShawarma(@Valid ShawarmaRequest shawarma, BindingResult bindingResult, Model model,
-                              @RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+                              @RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
         if (controllerUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
             return Pages.ADMIN_EDIT_SHAWARMA;
         }
@@ -92,9 +93,8 @@ public class AdminController {
 
     @PostMapping("/add/shawarma")
     public String addShawarma(@Valid ShawarmaRequest shawarma, BindingResult bindingResult, Model model,
-                             @RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+                             @RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
         if (controllerUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
-            System.out.println(shawarma);
             return Pages.ADMIN_ADD_SHAWARMA;
         }
         return controllerUtils.setAlertFlashMessage(attributes, "/admin/shawarmas", adminService.addShawarma(shawarma, file));
