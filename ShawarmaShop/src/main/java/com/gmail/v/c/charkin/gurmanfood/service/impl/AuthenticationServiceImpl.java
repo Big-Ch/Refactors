@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Реализация сервиса для аутентификации и восстановления пароля.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

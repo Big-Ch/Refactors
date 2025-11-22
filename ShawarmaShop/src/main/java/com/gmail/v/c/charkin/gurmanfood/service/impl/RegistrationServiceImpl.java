@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Реализация сервиса для регистрации новых пользователей.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

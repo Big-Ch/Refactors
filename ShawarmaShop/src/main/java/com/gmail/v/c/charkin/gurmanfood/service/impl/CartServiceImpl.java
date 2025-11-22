@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Реализация сервиса для работы с корзиной покупок.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

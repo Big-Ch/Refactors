@@ -21,6 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Реализация сервиса для работы с пользователями.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

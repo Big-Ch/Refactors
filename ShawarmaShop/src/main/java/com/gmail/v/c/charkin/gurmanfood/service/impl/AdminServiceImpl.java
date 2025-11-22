@@ -26,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/**
+ * Реализация сервиса для административных операций.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

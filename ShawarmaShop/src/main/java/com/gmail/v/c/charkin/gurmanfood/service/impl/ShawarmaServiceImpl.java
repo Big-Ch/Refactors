@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Реализация сервиса для работы с шаурмой.
+ */
 @Service
 @RequiredArgsConstructor
 public class ShawarmaServiceImpl implements ShawarmaService {
