@@ -58,6 +58,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Shawarma> shawarmaList;
 }

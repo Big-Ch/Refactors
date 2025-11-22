@@ -42,7 +42,7 @@ public class Order {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Shawarma> shawarmas = new ArrayList<>();
 
     @ManyToOne
