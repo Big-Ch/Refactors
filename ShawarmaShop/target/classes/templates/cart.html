@@ -29,7 +29,7 @@
                         <div class="col-2">
                             <div class="card-body">
                                 <h5 class="card-title"><span th:text="${shawarma.getPrice()}"></span> р.</h5>
-                                <form class="d-inline" action="/cart/remove" method="post">
+                                <form class="d-inline" th:action="@{/cart/remove}" method="post">
                                     <button class="btn btn-warning mb-2">
                                         <i class="far fa-minus-square mr-2"></i>
                                         Удалить

@@ -15,7 +15,7 @@
                         icon='fas fa-plus-square mr-2'
                     )"/>
                     <br/>
-                    <form method="post" action="/admin/add/shawarma" enctype="multipart/form-data">
+                    <form method="post" th:action="@{/admin/add/shawarma}" enctype="multipart/form-data">
                         <div class="form row">
                             <th:block th:replace="fragments/account-fragments :: add-shawarma-input(
                                 title='Название продукта',

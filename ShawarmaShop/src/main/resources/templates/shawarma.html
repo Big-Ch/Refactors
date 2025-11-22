@@ -19,7 +19,7 @@
                     <h6 class="mr-5">
                         <span th:text="${shawarma.getPrice()}"></span>.00 р.
                     </h6>
-                    <form action="/cart/add" method="post">
+                    <form th:action="@{/cart/add}" method="post">
                         <button type="submit" name="shawarmaId" class="btn btn-success mx-3"
                                 th:value="${shawarma.getId()}">
                             <i class="fas fa-cart-plus mr-2 fa-lg"></i>

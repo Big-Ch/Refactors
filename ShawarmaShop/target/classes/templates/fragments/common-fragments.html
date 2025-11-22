@@ -58,7 +58,7 @@
                                 Мой аккаунт
                             </a>
                         </li>
-                        <form id="logout" action="/logout" method="post">
+                        <form id="logout" th:action="@{/logout}" method="post">
                             <li class="nav-item">
                                 <a class="nav-link" href=# onclick="document.getElementById('logout').submit()">
                                     <input type="hidden"/>

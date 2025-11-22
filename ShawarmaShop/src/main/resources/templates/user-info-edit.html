@@ -13,7 +13,7 @@
                     <div class="row">
                         <th:block th:replace="fragments/account-fragments :: user-info"/>
                         <div class="col-md-6">
-                            <form method="post" action="/user/info/edit">
+                            <form method="post" th:action="@{/user/info/edit}">
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label">Имя:</label>
                                     <div class="col-sm-7">

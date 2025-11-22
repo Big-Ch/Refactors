@@ -11,7 +11,7 @@
                 <th:block th:replace="fragments/account-fragments :: account-sidebar"/>
                 <div class="col-md-9 mb-5">
                     <th:block th:replace="fragments/common-fragments :: info-title(text='Edit shawarma', icon='fas fa-edit mr-2')"/>
-                    <form method="post" action="/admin/edit/shawarma" enctype="multipart/form-data">
+                    <form method="post" th:action="@{/admin/edit/shawarma}" enctype="multipart/form-data">
                         <div class="row mt-5">
                             <div class="col-md-6">
                                 <th:block th:replace="fragments/account-fragments :: edit-shawarma-input(
