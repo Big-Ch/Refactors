@@ -14,9 +14,9 @@ import com.gmail.v.c.charkin.gurmanfood.repository.OrderRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.AdminService;
+import com.gmail.v.c.charkin.gurmanfood.service.DtoMapper;
 import com.gmail.v.c.charkin.gurmanfood.service.FileService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final ShawarmaRepository shawarmaRepository;
     private final OrderRepository orderRepository;
-    private final ModelMapper modelMapper;
+    private final DtoMapper dtoMapper;
     private final FileService fileService;
 
     @Override
@@ -99,7 +99,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private MessageResponse saveShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file, String message) throws IOException {
-        Shawarma shawarma = modelMapper.map(shawarmaRequest, Shawarma.class);
+        Shawarma shawarma = dtoMapper.mapToShawarma(shawarmaRequest);
         if (file != null && !file.isEmpty()) {
             String resultFilename = fileService.saveFile(file);
             shawarma.setFilename(resultFilename);

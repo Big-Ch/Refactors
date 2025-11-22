@@ -8,10 +8,10 @@ import com.gmail.v.c.charkin.gurmanfood.dto.response.CaptchaResponse;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.UserRequest;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
+import com.gmail.v.c.charkin.gurmanfood.service.DtoMapper;
 import com.gmail.v.c.charkin.gurmanfood.service.PasswordValidationService;
 import com.gmail.v.c.charkin.gurmanfood.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
-    private final ModelMapper modelMapper;
+    private final DtoMapper dtoMapper;
     private final PasswordValidationService passwordValidationService;
 
     @Value("${recaptcha.url}")
@@ -57,7 +57,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (!response.isSuccess()) {
             return new MessageResponse("captchaError", ErrorMessage.CAPTCHA_ERROR);
         }
-        User user = modelMapper.map(userRequest, User.class);
+        User user = dtoMapper.mapToUser(userRequest);
         user.setActive(false);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());

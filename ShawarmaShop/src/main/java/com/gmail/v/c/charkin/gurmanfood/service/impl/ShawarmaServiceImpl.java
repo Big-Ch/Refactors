@@ -7,7 +7,6 @@ import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.ShawarmaService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.List;
 public class ShawarmaServiceImpl implements ShawarmaService {
 
     private final ShawarmaRepository shawarmaRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public Shawarma getShawarmaById(Long shawarmaId) {
