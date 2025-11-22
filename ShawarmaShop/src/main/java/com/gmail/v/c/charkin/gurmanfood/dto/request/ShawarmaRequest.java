@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ public class ShawarmaRequest {
 
     @NotNull(message = ErrorMessage.FILL_IN_THE_INPUT_FIELD)
     @Min(value = 1, message = ErrorMessage.FILL_IN_THE_INPUT_FIELD)
+    @Max(value = 1000000, message = "Price must not exceed 1,000,000")
     private Integer price;
 
 }
