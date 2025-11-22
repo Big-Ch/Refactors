@@ -6,7 +6,8 @@ import com.gmail.v.c.charkin.gurmanfood.domain.User;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.OrderRequest;
 import com.gmail.v.c.charkin.gurmanfood.service.OrderService;
 import com.gmail.v.c.charkin.gurmanfood.service.UserService;
-import com.gmail.v.c.charkin.gurmanfood.utils.ControllerUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.PaginationUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,8 @@ public class OrderController {
 
     private final OrderService orderService;
     private final UserService userService;
-    private final ControllerUtils controllerUtils;
+    private final PaginationUtils paginationUtils;
+    private final ValidationUtils validationUtils;
 
     @GetMapping("/{orderId}")
     public String getOrder(@PathVariable Long orderId, Model model) {
@@ -42,14 +44,14 @@ public class OrderController {
 
     @GetMapping("/user/orders")
     public String getUserOrdersList(Model model, Pageable pageable) {
-        controllerUtils.addPagination(model, orderService.getUserOrdersList(pageable));
+        paginationUtils.addPagination(model, orderService.getUserOrdersList(pageable));
         return Pages.ORDERS;
     }
 
     @PostMapping
     public String postOrder(@Valid OrderRequest orderRequest, BindingResult bindingResult, Model model) {
         User user = userService.getAuthenticatedUser();
-        if (controllerUtils.validateInputFields(bindingResult, model, "shawarmas", user.getShawarmaList())) {
+        if (validationUtils.validateInputFields(bindingResult, model, "shawarmas", user.getShawarmaList())) {
             return Pages.ORDERING;
         }
         model.addAttribute("orderId", orderService.postOrder(user, orderRequest));

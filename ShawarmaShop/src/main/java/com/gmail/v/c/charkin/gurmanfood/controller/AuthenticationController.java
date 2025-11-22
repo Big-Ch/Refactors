@@ -5,7 +5,8 @@ import com.gmail.v.c.charkin.gurmanfood.constants.PathConstants;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.PasswordResetRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.service.AuthenticationService;
-import com.gmail.v.c.charkin.gurmanfood.utils.ControllerUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ModelUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +22,8 @@ import javax.validation.Valid;
 public class AuthenticationController {
 
     private final AuthenticationService authService;
-    private final ControllerUtils controllerUtils;
+    private final ValidationUtils validationUtils;
+    private final ModelUtils modelUtils;
 
     @GetMapping("/forgot")
     public String forgotPassword() {
@@ -30,7 +32,7 @@ public class AuthenticationController {
 
     @PostMapping("/forgot")
     public String forgotPassword(@RequestParam String email, Model model) {
-        return controllerUtils.setAlertMessage(model, Pages.FORGOT_PASSWORD, authService.sendPasswordResetCode(email));
+        return modelUtils.setAlertMessage(model, Pages.FORGOT_PASSWORD, authService.sendPasswordResetCode(email));
     }
 
     @GetMapping("/reset/{code}")
@@ -42,13 +44,13 @@ public class AuthenticationController {
     @PostMapping("/reset")
     public String resetPassword(@Valid PasswordResetRequest request, BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes, Model model) {
-        if (controllerUtils.validateInputFields(bindingResult, model, "email", request.getEmail())) {
+        if (validationUtils.validateInputFields(bindingResult, model, "email", request.getEmail())) {
             return Pages.RESET_PASSWORD;
         }
         MessageResponse messageResponse = authService.resetPassword(request);
-        if (controllerUtils.validateInputField(model, messageResponse, "email", request.getEmail())) {
+        if (validationUtils.validateInputField(model, messageResponse, "email", request.getEmail())) {
             return Pages.RESET_PASSWORD;
         }
-        return controllerUtils.setAlertFlashMessage(redirectAttributes, PathConstants.LOGIN, messageResponse);
+        return modelUtils.setAlertFlashMessage(redirectAttributes, PathConstants.LOGIN, messageResponse);
     }
 }

@@ -6,7 +6,9 @@ import com.gmail.v.c.charkin.gurmanfood.dto.request.ShawarmaRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.SearchRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.UserInfoResponse;
 import com.gmail.v.c.charkin.gurmanfood.service.AdminService;
-import com.gmail.v.c.charkin.gurmanfood.utils.ControllerUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ModelUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.PaginationUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,29 +29,31 @@ import java.io.IOException;
 public class AdminController {
 
     private final AdminService adminService;
-    private final ControllerUtils controllerUtils;
+    private final PaginationUtils paginationUtils;
+    private final ValidationUtils validationUtils;
+    private final ModelUtils modelUtils;
 
     @GetMapping("/shawarmas")
     public String getShawarmas(Pageable pageable, Model model) {
-        controllerUtils.addPagination(model, adminService.getShawarmas(pageable));
+        paginationUtils.addPagination(model, adminService.getShawarmas(pageable));
         return Pages.ADMIN_SHAWARMAS;
     }
 
     @GetMapping("/shawarmas/search")
     public String searchShawarmas(SearchRequest request, Pageable pageable, Model model) {
-        controllerUtils.addPagination(request, model, adminService.searchShawarmas(request, pageable));
+        paginationUtils.addPagination(request, model, adminService.searchShawarmas(request, pageable));
         return Pages.ADMIN_SHAWARMAS;
     }
 
     @GetMapping("/users")
     public String getUsers(Pageable pageable, Model model) {
-        controllerUtils.addPagination(model, adminService.getUsers(pageable));
+        paginationUtils.addPagination(model, adminService.getUsers(pageable));
         return Pages.ADMIN_ALL_USERS;
     }
 
     @GetMapping("/users/search")
     public String searchUsers(SearchRequest request, Pageable pageable, Model model) {
-        controllerUtils.addPagination(request, model, adminService.searchUsers(request, pageable));
+        paginationUtils.addPagination(request, model, adminService.searchUsers(request, pageable));
         return Pages.ADMIN_ALL_USERS;
     }
 
@@ -61,13 +65,13 @@ public class AdminController {
 
     @GetMapping("/orders")
     public String getOrders(Pageable pageable, Model model) {
-        controllerUtils.addPagination(model, adminService.getOrders(pageable));
+        paginationUtils.addPagination(model, adminService.getOrders(pageable));
         return Pages.ORDERS;
     }
 
     @GetMapping("/orders/search")
     public String searchOrders(SearchRequest request, Pageable pageable, Model model) {
-        controllerUtils.addPagination(request, model, adminService.searchOrders(request, pageable));
+        paginationUtils.addPagination(request, model, adminService.searchOrders(request, pageable));
         return Pages.ORDERS;
     }
 
@@ -80,10 +84,10 @@ public class AdminController {
     @PostMapping("/edit/shawarma")
     public String editShawarma(@Valid ShawarmaRequest shawarma, BindingResult bindingResult, Model model,
                               @RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
-        if (controllerUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
+        if (validationUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
             return Pages.ADMIN_EDIT_SHAWARMA;
         }
-        return controllerUtils.setAlertFlashMessage(attributes, "/admin/shawarmas", adminService.editShawarma(shawarma, file));
+        return modelUtils.setAlertFlashMessage(attributes, "/admin/shawarmas", adminService.editShawarma(shawarma, file));
     }
 
     @GetMapping("/add/shawarma")
@@ -94,17 +98,17 @@ public class AdminController {
     @PostMapping("/add/shawarma")
     public String addShawarma(@Valid ShawarmaRequest shawarma, BindingResult bindingResult, Model model,
                              @RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
-        if (controllerUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
+        if (validationUtils.validateInputFields(bindingResult, model, "shawarma", shawarma)) {
             return Pages.ADMIN_ADD_SHAWARMA;
         }
-        return controllerUtils.setAlertFlashMessage(attributes, "/admin/shawarmas", adminService.addShawarma(shawarma, file));
+        return modelUtils.setAlertFlashMessage(attributes, "/admin/shawarmas", adminService.addShawarma(shawarma, file));
     }
 
     @GetMapping("/user/{userId}")
     public String getUserById(@PathVariable Long userId, Model model, Pageable pageable) {
         UserInfoResponse userResponse = adminService.getUserById(userId, pageable);
         model.addAttribute("user", userResponse.getUser());
-        controllerUtils.addPagination(model, userResponse.getOrders());
+        paginationUtils.addPagination(model, userResponse.getOrders());
         return Pages.ADMIN_USER_DETAIL;
     }
 }

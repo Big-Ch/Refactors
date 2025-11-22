@@ -7,7 +7,9 @@ import com.gmail.v.c.charkin.gurmanfood.dto.request.EditUserRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.SearchRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.service.UserService;
-import com.gmail.v.c.charkin.gurmanfood.utils.ControllerUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ModelUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.PaginationUtils;
+import com.gmail.v.c.charkin.gurmanfood.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -26,7 +28,9 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-    private final ControllerUtils controllerUtils;
+    private final PaginationUtils paginationUtils;
+    private final ValidationUtils validationUtils;
+    private final ModelUtils modelUtils;
 
     @GetMapping("/contacts")
     public String contacts() {
@@ -46,7 +50,7 @@ public class UserController {
 
     @GetMapping("/orders/search")
     public String searchUserOrders(SearchRequest request, Pageable pageable, Model model) {
-        controllerUtils.addPagination(request, model, userService.searchUserOrders(request, pageable));
+        paginationUtils.addPagination(request, model, userService.searchUserOrders(request, pageable));
         return Pages.ORDERS;
     }
 
@@ -65,22 +69,22 @@ public class UserController {
     @PostMapping("/info/edit")
     public String editUserInfo(@Valid EditUserRequest request, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, Model model) {
-        if (controllerUtils.validateInputFields(bindingResult, model, "user", request)) {
+        if (validationUtils.validateInputFields(bindingResult, model, "user", request)) {
             return Pages.USER_INFO_EDIT;
         }
         MessageResponse messageResponse = userService.editUserInfo(request);
-        return controllerUtils.setAlertFlashMessage(redirectAttributes, "/user/info", messageResponse);
+        return modelUtils.setAlertFlashMessage(redirectAttributes, "/user/info", messageResponse);
     }
 
     @PostMapping("/change/password")
     public String changePassword(@Valid ChangePasswordRequest request, BindingResult bindingResult, Model model) {
-        if (controllerUtils.validateInputFields(bindingResult, model, "request", request)) {
+        if (validationUtils.validateInputFields(bindingResult, model, "request", request)) {
             return Pages.USER_PASSWORD_RESET;
         }
         MessageResponse messageResponse = userService.changePassword(request);
-        if (controllerUtils.validateInputField(model, messageResponse, "request", request)) {
+        if (validationUtils.validateInputField(model, messageResponse, "request", request)) {
             return Pages.USER_PASSWORD_RESET;
         }
-        return controllerUtils.setAlertMessage(model, Pages.USER_PASSWORD_RESET, messageResponse);
+        return modelUtils.setAlertMessage(model, Pages.USER_PASSWORD_RESET, messageResponse);
     }
 }
