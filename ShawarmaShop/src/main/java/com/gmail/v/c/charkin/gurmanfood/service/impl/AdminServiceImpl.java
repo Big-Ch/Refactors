@@ -17,6 +17,7 @@ import com.gmail.v.c.charkin.gurmanfood.service.AdminService;
 import com.gmail.v.c.charkin.gurmanfood.service.DtoMapper;
 import com.gmail.v.c.charkin.gurmanfood.service.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -57,8 +59,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Order getOrder(Long orderId) {
+        log.debug("Fetching order with ID: {}", orderId);
         return orderRepository.getById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.warn("Order not found with ID: {}", orderId);
+                    return new EntityNotFoundException(ErrorMessage.ORDER_NOT_FOUND);
+                });
     }
 
     @Override
@@ -74,26 +80,40 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Shawarma getShawarmaById(Long shawarmaId) {
+        log.debug("Fetching shawarma with ID: {}", shawarmaId);
         return shawarmaRepository.findById(shawarmaId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.SHAWARMA_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.warn("Shawarma not found with ID: {}", shawarmaId);
+                    return new EntityNotFoundException(ErrorMessage.SHAWARMA_NOT_FOUND);
+                });
     }
 
     @Override
     @Transactional
     public MessageResponse editShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException {
-        return saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_EDITED);
+        log.info("Editing shawarma with ID: {}", shawarmaRequest.getId());
+        MessageResponse response = saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_EDITED);
+        log.info("Shawarma edited successfully. ID: {}", shawarmaRequest.getId());
+        return response;
     }
 
     @Override
     @Transactional
     public MessageResponse addShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file) throws IOException {
-        return saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_ADDED);
+        log.info("Adding new shawarma: {}", shawarmaRequest.getShawarmaTitle());
+        MessageResponse response = saveShawarma(shawarmaRequest, file, SuccessMessage.SHAWARMA_ADDED);
+        log.info("Shawarma added successfully. Title: {}", shawarmaRequest.getShawarmaTitle());
+        return response;
     }
 
     @Override
     public UserInfoResponse getUserById(Long userId, Pageable pageable) {
+        log.debug("Fetching user info with ID: {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.warn("User not found with ID: {}", userId);
+                    return new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND);
+                });
         Page<Order> orders = orderRepository.findOrderByUserId(userId, pageable);
         return new UserInfoResponse(user, orders);
     }
@@ -101,10 +121,13 @@ public class AdminServiceImpl implements AdminService {
     private MessageResponse saveShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file, String message) throws IOException {
         Shawarma shawarma = dtoMapper.mapToShawarma(shawarmaRequest);
         if (file != null && !file.isEmpty()) {
+            log.debug("Saving file for shawarma: {}", shawarmaRequest.getShawarmaTitle());
             String resultFilename = fileService.saveFile(file);
             shawarma.setFilename(resultFilename);
+            log.debug("File saved: {}", resultFilename);
         }
         shawarmaRepository.save(shawarma);
+        log.debug("Shawarma saved to database. ID: {}", shawarma.getId());
         return new MessageResponse("alert-success", message);
     }
 }

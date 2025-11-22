@@ -12,6 +12,7 @@ import com.gmail.v.c.charkin.gurmanfood.service.DtoMapper;
 import com.gmail.v.c.charkin.gurmanfood.service.PasswordValidationService;
 import com.gmail.v.c.charkin.gurmanfood.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
@@ -43,18 +45,22 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     @Transactional
     public MessageResponse registration(String captchaResponse, UserRequest userRequest) {
+        log.info("Registration attempt for email: {}", userRequest.getEmail());
         MessageResponse passwordValidation = passwordValidationService.validatePasswordMatch(
                 userRequest.getPassword(), userRequest.getPassword2());
         if (passwordValidation != null) {
+            log.warn("Registration failed: passwords do not match for email: {}", userRequest.getEmail());
             return passwordValidation;
         }
         if (userRepository.findByEmail(userRequest.getEmail()) != null) {
+            log.warn("Registration failed: email already in use: {}", userRequest.getEmail());
             return new MessageResponse("emailError", ErrorMessage.EMAIL_IN_USE);
         }
 
         String url = String.format(captchaUrl, secret, captchaResponse);
         CaptchaResponse response = restTemplate.postForObject(url, Collections.emptyList(), CaptchaResponse.class);
         if (!response.isSuccess()) {
+            log.warn("Registration failed: captcha validation failed for email: {}", userRequest.getEmail());
             return new MessageResponse("captchaError", ErrorMessage.CAPTCHA_ERROR);
         }
         User user = dtoMapper.mapToUser(userRequest);
@@ -63,24 +69,29 @@ public class RegistrationServiceImpl implements RegistrationService {
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        log.info("User registered successfully. Email: {}, Activation code generated", user.getEmail());
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("firstName", user.getFirstName());
         attributes.put("activationCode", "/registration/activate/" + user.getActivationCode());
         mailService.sendMessageHtml(user.getEmail(), "Activation code", "registration-template", attributes);
+        log.debug("Activation email sent to: {}", user.getEmail());
         return new MessageResponse("alert-success", SuccessMessage.ACTIVATION_CODE_SEND);
     }
 
     @Override
     @Transactional
     public MessageResponse activateEmailCode(String code) {
+        log.info("Email activation attempt with code: {}", code);
         User user = userRepository.findByActivationCode(code);
 
         if (user == null) {
+            log.warn("Email activation failed: invalid activation code: {}", code);
             return new MessageResponse("alert-danger", ErrorMessage.ACTIVATION_CODE_NOT_FOUND);
         }
         user.setActivationCode(null);
         user.setActive(true);
         userRepository.save(user);
+        log.info("User activated successfully. Email: {}", user.getEmail());
         return new MessageResponse("alert-success", SuccessMessage.USER_ACTIVATED);
     }
 }

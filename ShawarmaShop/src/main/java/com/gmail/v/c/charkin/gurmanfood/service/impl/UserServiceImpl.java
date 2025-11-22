@@ -13,6 +13,7 @@ import com.gmail.v.c.charkin.gurmanfood.security.UserPrincipal;
 import com.gmail.v.c.charkin.gurmanfood.service.PasswordValidationService;
 import com.gmail.v.c.charkin.gurmanfood.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -45,24 +47,29 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MessageResponse editUserInfo(EditUserRequest request) {
         User user = getAuthenticatedUser();
+        log.info("Updating user info for user: {}", user.getEmail());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setCity(request.getCity());
         user.setAddress(request.getAddress());
         user.setPhoneNumber(request.getPhoneNumber());
+        log.info("User info updated successfully for user: {}", user.getEmail());
         return new MessageResponse("alert-success", SuccessMessage.USER_UPDATED);
     }
 
     @Override
     @Transactional
     public MessageResponse changePassword(ChangePasswordRequest request) {
+        User user = getAuthenticatedUser();
+        log.info("Password change attempt for user: {}", user.getEmail());
         MessageResponse passwordValidation = passwordValidationService.validatePasswordMatch(
                 request.getPassword(), request.getPassword2());
         if (passwordValidation != null) {
+            log.warn("Password change failed: passwords do not match for user: {}", user.getEmail());
             return passwordValidation;
         }
-        User user = getAuthenticatedUser();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        log.info("Password changed successfully for user: {}", user.getEmail());
         return new MessageResponse("alert-success", SuccessMessage.PASSWORD_CHANGED);
     }
 }
