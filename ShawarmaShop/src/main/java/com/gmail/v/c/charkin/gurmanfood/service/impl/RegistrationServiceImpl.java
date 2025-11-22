@@ -8,6 +8,7 @@ import com.gmail.v.c.charkin.gurmanfood.dto.response.CaptchaResponse;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.UserRequest;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
+import com.gmail.v.c.charkin.gurmanfood.service.PasswordValidationService;
 import com.gmail.v.c.charkin.gurmanfood.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,6 +32,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
     private final ModelMapper modelMapper;
+    private final PasswordValidationService passwordValidationService;
 
     @Value("${recaptcha.url}")
     private String captchaUrl;
@@ -41,8 +43,10 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     @Transactional
     public MessageResponse registration(String captchaResponse, UserRequest userRequest) {
-        if (userRequest.getPassword() != null && !userRequest.getPassword().equals(userRequest.getPassword2())) {
-            return new MessageResponse("passwordError", ErrorMessage.PASSWORDS_DO_NOT_MATCH);
+        MessageResponse passwordValidation = passwordValidationService.validatePasswordMatch(
+                userRequest.getPassword(), userRequest.getPassword2());
+        if (passwordValidation != null) {
+            return passwordValidation;
         }
         if (userRepository.findByEmail(userRequest.getEmail()) != null) {
             return new MessageResponse("emailError", ErrorMessage.EMAIL_IN_USE);

@@ -8,6 +8,7 @@ import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.AuthenticationService;
+import com.gmail.v.c.charkin.gurmanfood.service.PasswordValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final PasswordValidationService passwordValidationService;
 
     @Override
     @Transactional
@@ -49,8 +51,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public MessageResponse resetPassword(PasswordResetRequest request) {
-        if (request.getPassword() != null && !request.getPassword().equals(request.getPassword2())) {
-            return new MessageResponse("passwordError", ErrorMessage.PASSWORDS_DO_NOT_MATCH);
+        MessageResponse passwordValidation = passwordValidationService.validatePasswordMatch(
+                request.getPassword(), request.getPassword2());
+        if (passwordValidation != null) {
+            return passwordValidation;
         }
         User user = userRepository.findByEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
