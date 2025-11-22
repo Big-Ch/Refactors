@@ -1,13 +1,16 @@
 package com.gmail.v.c.charkin.gurmanfood.service.impl;
 
+import com.gmail.v.c.charkin.gurmanfood.constants.ErrorMessage;
 import com.gmail.v.c.charkin.gurmanfood.domain.Shawarma;
 import com.gmail.v.c.charkin.gurmanfood.domain.User;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.CartService;
 import com.gmail.v.c.charkin.gurmanfood.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,7 +31,8 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void addShawarmaToCart(Long shawarmaId) {
         User user = userService.getAuthenticatedUser();
-        Shawarma shawarma = shawarmaRepository.getOne(shawarmaId);
+        Shawarma shawarma = shawarmaRepository.findById(shawarmaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.SHAWARMA_NOT_FOUND));
         user.getShawarmaList().add(shawarma);
     }
 
@@ -36,7 +40,8 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void removeShawarmaFromCart(Long shawarmaId) {
         User user = userService.getAuthenticatedUser();
-        Shawarma shawarma = shawarmaRepository.getOne(shawarmaId);
+        Shawarma shawarma = shawarmaRepository.findById(shawarmaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.SHAWARMA_NOT_FOUND));
         user.getShawarmaList().remove(shawarma);
     }
 }

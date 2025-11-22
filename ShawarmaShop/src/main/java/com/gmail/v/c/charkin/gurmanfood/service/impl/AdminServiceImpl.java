@@ -13,9 +13,9 @@ import com.gmail.v.c.charkin.gurmanfood.repository.OrderRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.AdminService;
+import com.gmail.v.c.charkin.gurmanfood.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,21 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    @Value("${upload.path}")
-    private String uploadPath;
-
     private final UserRepository userRepository;
     private final ShawarmaRepository shawarmaRepository;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
+    private final FileService fileService;
 
     @Override
     public Page<Shawarma> getShawarmas(Pageable pageable) {
@@ -105,15 +101,8 @@ public class AdminServiceImpl implements AdminService {
 
     private MessageResponse saveShawarma(ShawarmaRequest shawarmaRequest, MultipartFile file, String message) throws IOException {
         Shawarma shawarma = modelMapper.map(shawarmaRequest, Shawarma.class);
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
+        if (file != null && !file.isEmpty()) {
+            String resultFilename = fileService.saveFile(file);
             shawarma.setFilename(resultFilename);
         }
         shawarmaRepository.save(shawarma);
