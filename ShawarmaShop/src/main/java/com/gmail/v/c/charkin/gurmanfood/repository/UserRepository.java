@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = "roles")
     Page<User> findAll(Pageable pageable);
 
-    @EntityGraph(attributePaths = "roles")
+    @EntityGraph(attributePaths = {"roles", "shawarmaList"})
     User findByEmail(String email);
 
     @EntityGraph(attributePaths = "roles")
@@ -32,7 +32,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "END) " +
             "LIKE UPPER(CONCAT('%',:text,'%'))")
     Page<User> searchUsers(String searchType, String text, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"roles", "shawarmaList"})
-    User findByEmailWithCart(String email);
 }

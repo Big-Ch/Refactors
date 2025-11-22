@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getAuthenticatedUser() {
         UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmailWithCart(principal.getUsername());
+        return userRepository.findByEmail(principal.getUsername());
     }
 
     @Override
