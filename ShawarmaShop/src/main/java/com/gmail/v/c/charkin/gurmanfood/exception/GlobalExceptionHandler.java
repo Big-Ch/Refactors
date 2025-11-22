@@ -21,7 +21,64 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
+     * Обрабатывает EntityNotFoundException - когда сущность не найдена.
+     *
+     * @param ex исключение
+     * @param model модель для передачи данных в представление
+     * @return имя представления для отображения ошибки
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String handleEntityNotFoundException(EntityNotFoundException ex, Model model) {
+        logger.error("EntityNotFoundException occurred: {}", ex.getMessage(), ex);
+        model.addAttribute("errorMessage", ex.getMessage());
+        return Pages.ERROR_404;
+    }
+
+    /**
+     * Обрабатывает FileUploadException - ошибки загрузки файлов.
+     *
+     * @param ex исключение
+     * @param model модель для передачи данных в представление
+     * @return имя представления для отображения ошибки
+     */
+    @ExceptionHandler(FileUploadException.class)
+    public String handleFileUploadException(FileUploadException ex, Model model) {
+        logger.error("FileUploadException occurred: {}", ex.getMessage(), ex);
+        model.addAttribute("errorMessage", "File upload error: " + ex.getMessage());
+        return Pages.ERROR_500;
+    }
+
+    /**
+     * Обрабатывает ValidationException - ошибки валидации данных.
+     *
+     * @param ex исключение
+     * @param model модель для передачи данных в представление
+     * @return имя представления для отображения ошибки
+     */
+    @ExceptionHandler(ValidationException.class)
+    public String handleValidationException(ValidationException ex, Model model) {
+        logger.warn("ValidationException occurred: {}", ex.getMessage(), ex);
+        model.addAttribute("errorMessage", "Validation error: " + ex.getMessage());
+        return Pages.ERROR_500;
+    }
+
+    /**
+     * Обрабатывает BusinessLogicException - общие бизнес-логические ошибки.
+     *
+     * @param ex исключение
+     * @param model модель для передачи данных в представление
+     * @return имя представления для отображения ошибки
+     */
+    @ExceptionHandler(BusinessLogicException.class)
+    public String handleBusinessLogicException(BusinessLogicException ex, Model model) {
+        logger.error("BusinessLogicException occurred: {}", ex.getMessage(), ex);
+        model.addAttribute("errorMessage", ex.getMessage());
+        return Pages.ERROR_500;
+    }
+
+    /**
      * Обрабатывает ResponseStatusException - исключения с HTTP статусами.
+     * Оставлен для обратной совместимости с существующим кодом.
      *
      * @param ex исключение
      * @param model модель для передачи данных в представление
@@ -45,6 +102,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Обрабатывает IOException - ошибки работы с файлами.
+     * Обрабатывает только IOException, которые не являются FileUploadException.
      *
      * @param ex исключение
      * @param model модель для передачи данных в представление

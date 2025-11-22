@@ -9,6 +9,7 @@ import com.gmail.v.c.charkin.gurmanfood.dto.request.ShawarmaRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.SearchRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.UserInfoResponse;
+import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.OrderRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
@@ -18,11 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
@@ -59,7 +58,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Order getOrder(Long orderId) {
         return orderRepository.getById(orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Override
@@ -76,7 +75,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Shawarma getShawarmaById(Long shawarmaId) {
         return shawarmaRepository.findById(shawarmaId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.SHAWARMA_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.SHAWARMA_NOT_FOUND));
     }
 
     @Override
@@ -94,7 +93,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public UserInfoResponse getUserById(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND));
         Page<Order> orders = orderRepository.findOrderByUserId(userId, pageable);
         return new UserInfoResponse(user, orders);
     }

@@ -5,6 +5,7 @@ import com.gmail.v.c.charkin.gurmanfood.domain.Order;
 import com.gmail.v.c.charkin.gurmanfood.domain.Shawarma;
 import com.gmail.v.c.charkin.gurmanfood.domain.User;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.OrderRequest;
+import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.OrderRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.OrderService;
 import com.gmail.v.c.charkin.gurmanfood.service.UserService;
@@ -12,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     public Order getOrder(Long orderId) {
         User user = userService.getAuthenticatedUser();
         return orderRepository.getByIdAndUserId(orderId, user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Override

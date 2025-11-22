@@ -3,15 +3,14 @@ package com.gmail.v.c.charkin.gurmanfood.service.impl;
 import com.gmail.v.c.charkin.gurmanfood.constants.ErrorMessage;
 import com.gmail.v.c.charkin.gurmanfood.domain.Shawarma;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.SearchRequest;
+import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.ShawarmaRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.ShawarmaService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +25,7 @@ public class ShawarmaServiceImpl implements ShawarmaService {
     @Override
     public Shawarma getShawarmaById(Long shawarmaId) {
         return shawarmaRepository.findById(shawarmaId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.SHAWARMA_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.SHAWARMA_NOT_FOUND));
     }
 
     @Override

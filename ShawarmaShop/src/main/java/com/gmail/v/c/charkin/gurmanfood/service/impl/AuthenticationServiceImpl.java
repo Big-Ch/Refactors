@@ -5,14 +5,13 @@ import com.gmail.v.c.charkin.gurmanfood.constants.SuccessMessage;
 import com.gmail.v.c.charkin.gurmanfood.domain.User;
 import com.gmail.v.c.charkin.gurmanfood.dto.request.PasswordResetRequest;
 import com.gmail.v.c.charkin.gurmanfood.dto.response.MessageResponse;
+import com.gmail.v.c.charkin.gurmanfood.exception.EntityNotFoundException;
 import com.gmail.v.c.charkin.gurmanfood.repository.UserRepository;
 import com.gmail.v.c.charkin.gurmanfood.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String getEmailByPasswordResetCode(String code) {
         return userRepository.getEmailByPasswordResetCode(code)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ErrorMessage.INVALID_PASSWORD_CODE));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.INVALID_PASSWORD_CODE));
     }
 
     @Override
